@@ -1,10 +1,12 @@
 import express from "express";
 
 const host= "0.0.0.0";
-const porta = 3001;
+const porta = 3000;
 var listaUsuarios = [];
 
 const server = express();
+
+server.use(express.urlencoded({extended: true}));
 
 server.get("/", (requicisao, resposta) => {
     resposta.send(`
@@ -149,9 +151,48 @@ server.get("/cadastroUsuario", (requisicao,resposta)=>{
 }) 
 
 server.post('/adicionarUsuario', (requisicao, resposta) =>{ 
-    console.log("Usuario cadastrado com sucesso!");
-    listaUsuarios.push();
+    const nome = requisicao.body.nome;
+    const sobrenome = requisicao.body.sobrenome;
+    const usuario = requisicao.body.cidade;
+    const uf = requisicao.body.uf;
+    const cep = requisicao.body.cep;
+
+    listaUsuarios.push({nome, sobrenome, usuario, cidade, uf, cep});
+    resposta.redirect("listarUsuarios");
 });
+
+server.get("/listarUsuarios", (requisicao, resposta) => {
+    let conteudo = `
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de usuario do Sistema</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center" border m-3 p-3 bg-light> Lista de Usuarios</h>
+        <table class="table-striped">
+        <thead> 
+              <tr>
+              <th> Nome </th>
+              <th> Sobrenome </th>
+              <th> Usuario </th>
+              <th> Cidade </th>
+              <th> UF </th>
+              <th> Cep </th>
+              </tr> 
+        </thead>
+        </table>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</html>
+    `
+
+})
 
 
 server.listen(porta, host, ()=> {
